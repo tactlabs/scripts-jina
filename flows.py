@@ -24,7 +24,7 @@ def script_flow():
         Flow(port_expose = 12345, protocol = 'http', cors = True)
         .add(
             name = 'encoder',
-            uses = 'jinahub://CLIPTextEncoder'
+            uses = 'jinahub://TransformerTorchEncoder'
         )
         .add(
             name = 'indexer',
@@ -35,13 +35,11 @@ def script_flow():
     return flow
 
 
-
-print(get_docs('jina_2.csv')[0].json())
-# with script_flow() as f:
-#     f.post(
-#         on = '/index',
-#         inputs = get_docs('jina_2.csv'),
-#         on_done = print('indexed successfully....')  
-#         )
-#     f.block()
+with script_flow() as f:
+    f.post(
+        on = '/index',
+        inputs = get_docs('jina_2.csv'),
+        on_done = print('indexed successfully....')  
+        )
+    f.block()
         

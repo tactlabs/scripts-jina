@@ -17,6 +17,8 @@ def send_req(text):
         on_done = lambda x : x.docs[0].matches
     )
 
+    return res
+
 @app.route('/', methods = ['POST', 'GET'])
 # @cross_origin
 def index():

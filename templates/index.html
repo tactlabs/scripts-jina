@@ -66,9 +66,11 @@
 
     {% for hit in result %}
         <div  class="card" style="max-width:95%;margin-left:10px;margin-bottom:10px;">      
-      <h4 class="card-title">{{ hit.location }}</h4>
+      <h4 class="card-title">{{ hit.script }}</h4>
       <br>
-      <h6>{{(hit.text |safe)}}</h6>
+      <h6>{{(hit.show |safe)}}</h6>
+      <h6>{{(hit.episode |safe)}}</h6>
+      <h6>{{(hit.season |safe)}}</h6>
     </div>
       <br><br>
     {% endfor %}

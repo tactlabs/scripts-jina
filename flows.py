@@ -2,6 +2,7 @@ from jina import Flow, Executor, Document, DocumentArray
 from jina.types.document import DocumentSourceType
 import pandas as pd 
 import numpy as np 
+import os 
 
 
 def get_docs(fname):
@@ -9,7 +10,7 @@ def get_docs(fname):
     df = pd.read_csv(fname)
     for text in df.iterrows():
         doc = Document(text = text[1]['Text'], tags = {
-            'episode_name' : text[1]['Episode'],
+            'episode' : text[1]['Episode'],
             'season' : text[1]['Season'],
             'show' : text[1]['Show']
         })
@@ -19,9 +20,8 @@ def get_docs(fname):
     return docs
 
 
-def script_flow():
-    flow = (
-        Flow(port_expose = 12345, protocol = 'http', cors = True)
+flow = (
+        Flow(cors = True, protocol = 'http', install_requirements=True, port_expose = 12345)
         .add(
             name = 'encoder',
             uses = 'jinahub://TransformerTorchEncoder'
@@ -32,10 +32,9 @@ def script_flow():
         )
     )
 
-    return flow
 
-
-with script_flow() as f:
+os.system('rm -rf workspace')
+with flow as f:
     f.post(
         on = '/index',
         inputs = get_docs('jina_2.csv'),

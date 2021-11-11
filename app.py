@@ -12,12 +12,10 @@ def send_req(text):
         on = '/search',
         inputs = docs,
         return_results = True,
-        parameters = {
-            'top_k' : 10
-        },
+        on_error = print,
         on_done = lambda x : x.docs[0].matches
     )
-
+    print('Got response from the flow ...')
     return res
 
 @app.route('/', methods = ['GET'])
@@ -45,5 +43,6 @@ def index_post():
 
 if __name__ == '__main__':
     app.run(
-        debug = True
+        debug = True,
+        port = 5050 
     )   

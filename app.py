@@ -1,11 +1,12 @@
 from flask import Flask, render_template, request
 from jina import Client, Document, DocumentArray
+import re
 
 app = Flask(__name__)
 
 
 def send_req(text):
-    c = Client( port = 12345, protocol = 'http', host = 'localhost')
+    c = Client( port = 12344, protocol = 'http', host = 'localhost')
     print('sending query to jina flow ...')
     docs = DocumentArray([Document(text = text)])
     res = c.post(
@@ -13,10 +14,16 @@ def send_req(text):
         inputs = docs,
         return_results = True,
         on_error = print,
-        on_done = lambda x : x.docs[0].matches
+        on_done = lambda x : x.docs[0].matches,
+        parameters = {
+            'top_K' : 5
+        }
     )
     print('Got response from the flow ...')
     return res
+
+def highlight(query, script):
+    pass
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -26,16 +33,15 @@ def index():
 @app.route('/', methods = ['POST'])
 def index_post():
     text = request.form.get('query_word')
-    print(text)
-    matches = send_req(text)
+    response = send_req(text)[0].docs[0].matches[:5]
 
     data = [
         {
             "script" : doc.text,
-            "show" : doc.tags['solution'],
+            "show" : doc.tags['show'],
             'episode' : doc.tags['episode'],
             'season' : doc.tags['season']
-        } for doc in matches
+        } for doc in response
     ]
 
     return render_template('index.html', result = data)

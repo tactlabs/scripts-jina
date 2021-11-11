@@ -1,5 +1,4 @@
 from jina import Flow, Executor, Document, DocumentArray
-from jina.types.document import DocumentSourceType
 import pandas as pd 
 import numpy as np 
 import os 
@@ -17,14 +16,15 @@ def get_docs(fname):
 
         docs.append(doc)
 
-    return docs
+    return docs[:50]
 
 
 flow = (
-        Flow(cors = True, protocol = 'http', install_requirements=True, port_expose = 12345)
+        Flow(cors = True, protocol = 'http', install_requirements=True, port_expose = 12344)
         .add(
             name = 'encoder',
-            uses = 'jinahub://TransformerTorchEncoder'
+            uses = 'jinahub://TransformerTorchEncoder/v0.3',
+            force=True
         )
         .add(
             name = 'indexer',

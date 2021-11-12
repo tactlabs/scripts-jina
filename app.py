@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request
 from jina import Client, Document, DocumentArray
 import re
+import random
 
 app = Flask(__name__)
 
@@ -23,7 +24,20 @@ def send_req(text):
     return res
 
 def highlight(query, script):
-    pass
+    potential_script = None
+    scripts = re.split(r'\.( )[a-zA-Z]+:', script)
+    query = '|'.join([i for i in query.split() if len(i) > 2])
+    for s in scripts:
+        if re.findall(r'{}'.format(query), s.lower()):
+            potential_script = s
+            break
+
+    if not potential_script:
+        potential_script = random.choice(scripts)
+    
+    return potential_script
+
+
 
 @app.route('/', methods = ['GET'])
 def index():
@@ -37,7 +51,7 @@ def index_post():
 
     data = [
         {
-            "script" : doc.text,
+            "script" : highlight(text, doc.text),
             "show" : doc.tags['show'],
             'episode' : doc.tags['episode'],
             'season' : doc.tags['season']

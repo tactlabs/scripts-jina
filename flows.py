@@ -16,7 +16,7 @@ def get_docs(fname):
 
         docs.append(doc)
 
-    return docs[:50]
+    return docs
 
 
 flow = (
